@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>WISATA | Monitoring Tiket Wisata</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        .hero { 
+            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), 
+                        url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1350&q=80');
+            height: 100vh; background-size: cover; background-position: center;
+            color: white; display: flex; align-items: center; justify-content: center; text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="hero">
+        <div class="container">
+            <h1 class="display-2 fw-bold mb-3"><i class="fas fa-mountain-sun"></i> WISATA</h1>
+            <p class="lead mb-5 fs-3">Sistem Monitoring Tiket Wisata Real-Time & Modern</p>
+            <div class="d-grid gap-3 d-sm-flex justify-content-sm-center">
+                <a href="login.php" class="btn btn-primary">Login Petugas</a>
+<a href="register.php" class="btn btn-outline-light">Daftar Pengunjung</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
