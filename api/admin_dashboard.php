@@ -1,10 +1,15 @@
 <?php
 session_start();
+// Proteksi halaman admin
 if($_SESSION['role'] != 'admin') { 
     header("Location: login.php"); 
     exit; 
 }
 include "koneksi.php";
+
+// Menghitung Total Pengguna agar tidak error
+$query_user = mysqli_query($koneksi, "SELECT COUNT(*) as total FROM users");
+$data_user = mysqli_fetch_assoc($query_user);
 ?>
 
 <!DOCTYPE html>
@@ -16,14 +21,19 @@ include "koneksi.php";
     <style>
         .sidebar { height: 100vh; width: 250px; position: fixed; background: #212529; color: white; padding: 20px; }
         .content { margin-left: 250px; padding: 30px; }
+        .nav-link:hover { background: rgba(255,255,255,0.1); border-radius: 5px; }
     </style>
 </head>
 <body>
     <div class="sidebar">
         <h4 class="mb-5 fw-bold text-primary"><i class="fas fa-shield-halved"></i> ADMIN PANEL</h4>
         <nav class="nav flex-column">
-            <a class="nav-link text-white active" href="#"><i class="fas fa-chart-line me-2"></i> Dashboard</a>
-            <a class="nav-link text-white" href="#"><i class="fas fa-users me-2"></i> Kelola User</a>
+            <a class="nav-link text-white active" href="admin_dashboard.php"><i class="fas fa-chart-line me-2"></i> Dashboard</a>
+            
+            <a class="nav-link text-white" href="kelola_wisata.php"><i class="fas fa-mountain-sun me-2"></i> Kelola Wisata</a>
+            
+            <a class="nav-link text-white" href="kelola_user.php"><i class="fas fa-users me-2"></i> Kelola User</a>
+            
             <hr>
             <a class="nav-link text-danger" href="logout.php"><i class="fas fa-power-off me-2"></i> Logout</a>
         </nav>

@@ -24,7 +24,7 @@ if(isset($_POST['daftar'])){
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>Register | WIDATA</title>
+    <title>Register | WISATA</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body { 

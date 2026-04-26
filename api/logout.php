@@ -6,7 +6,7 @@ session_destroy();
 // Pastikan file tujuan 'index.php' ada di folder yang sama
 echo "<script>
     alert('Anda telah berhasil keluar.');
-    window.location='index.php'; 
+    window.location='index.html'; 
 </script>";
 exit;
 ?>
