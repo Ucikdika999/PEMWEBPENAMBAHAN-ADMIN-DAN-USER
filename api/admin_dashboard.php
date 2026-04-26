@@ -1,9 +1,10 @@
 <?php
 session_start();
-// Proteksi halaman admin
-if($_SESSION['role'] != 'admin') { 
-    header("Location: login.php"); 
-    exit; 
+
+// Gunakan isset() untuk cek dulu sebelum akses
+if (!isset($_SESSION['role']) || $_SESSION['role'] != 'admin') {
+    header('Location: login.php');
+    exit();
 }
 include "koneksi.php";
 
