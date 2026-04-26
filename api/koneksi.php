@@ -1,10 +1,10 @@
 <?php
 // Data dari TiDB Cloud
-$host = '';
-$port = ;
-$user = '';
-$pass = '';
-$db   = '';
+$host = 'gateway01.ap-southeast-1.prod.alicloud.tidbcloud.com';
+$port = 4000;
+$user = '2tfzdzpXzpZ8yRy.root';
+$pass = 'xG0M9RxORnl8ZUZz';
+$db   = 'monitoring_tiket2';
 
 // Inisialisasi mysqli
 $koneksi = mysqli_init();
