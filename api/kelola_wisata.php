@@ -1,50 +1,63 @@
 <?php
+ob_start(); // Memulai output buffering untuk mencegah error "headers already sent"
 session_start();
-include "koneksi.php"; // Menggunakan file koneksi kamu
 
-// Keamanan: Hanya admin yang boleh masuk
-if($_SESSION['role'] != 'admin') { header("Location: login.php"); exit; }
+// 1. Gunakan auth_check agar pengecekan login aman dan terpusat
+include "auth_check.php"; 
+include "koneksi.php";
+
+// 2. Keamanan: Pastikan hanya admin yang bisa akses
+// Kita gunakan isset() untuk mencegah "Undefined array key"
+if(!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') { 
+    header("Location: login.php"); 
+    exit; 
+}
 
 // --- PROSES CRUD ---
 // 1. TAMBAH DATA
 if(isset($_POST['tambah'])){
-    $nama = $_POST['nama_wisata'];
-    $harga = $_POST['harga'];
+    $nama = mysqli_real_escape_string($koneksi, $_POST['nama_wisata']);
+    $harga = mysqli_real_escape_string($koneksi, $_POST['harga']);
     mysqli_query($koneksi, "INSERT INTO destinasi (nama_wisata, harga) VALUES ('$nama', '$harga')");
     header("Location: kelola_wisata.php");
+    exit;
 }
 
 // 2. HAPUS DATA
 if(isset($_GET['hapus'])){
-    $id = $_GET['hapus'];
+    $id = mysqli_real_escape_string($koneksi, $_GET['hapus']);
     mysqli_query($koneksi, "DELETE FROM destinasi WHERE id_wisata='$id'");
     header("Location: kelola_wisata.php");
+    exit;
 }
 
-// 3. EDIT DATA (Sederhana)
+// 3. EDIT DATA
 if(isset($_POST['edit'])){
-    $id = $_POST['id_wisata'];
-    $harga = $_POST['harga'];
+    $id = mysqli_real_escape_string($koneksi, $_POST['id_wisata']);
+    $harga = mysqli_real_escape_string($koneksi, $_POST['harga']);
     mysqli_query($koneksi, "UPDATE destinasi SET harga='$harga' WHERE id_wisata='$id'");
     header("Location: kelola_wisata.php");
+    exit;
 }
 ?>
 
 <!DOCTYPE html>
 <html lang="id">
 <head>
+    <meta charset="UTF-8">
     <title>Kelola Wisata | Admin</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 </head>
 <body class="bg-light">
     <div class="container mt-5">
-        <div class="d-flex justify-content-between mb-4">
-            <h3>Panel Kelola Wisata</h3>
-            <a href="admin_dashboard.php" class="btn btn-secondary">Kembali</a>
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h3><i class="fas fa-map-marked-alt"></i> Panel Kelola Wisata</h3>
+            <a href="admin_dashboard.php" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Kembali</a>
         </div>
 
         <div class="card p-4 mb-4 shadow-sm border-0">
-            <h5>Tambah Wisata Baru</h5>
+            <h5 class="fw-bold mb-3">Tambah Wisata Baru</h5>
             <form method="POST" class="row g-3">
                 <div class="col-md-6">
                     <input type="text" name="nama_wisata" class="form-control" placeholder="Nama Wisata" required>
@@ -59,8 +72,8 @@ if(isset($_POST['edit'])){
         </div>
 
         <div class="table-responsive">
-            <table class="table table-white table-hover shadow-sm rounded">
-                <thead class="table-primary">
+            <table class="table table-white table-hover shadow-sm rounded overflow-hidden">
+                <thead class="table-dark">
                     <tr>
                         <th>Nama Wisata</th>
                         <th>Harga (Rp)</th>
@@ -74,7 +87,7 @@ if(isset($_POST['edit'])){
                     ?>
                     <tr>
                         <form method="POST">
-                            <td><?php echo $d['nama_wisata']; ?></td>
+                            <td class="align-middle"><?php echo htmlspecialchars($d['nama_wisata']); ?></td>
                             <td>
                                 <input type="hidden" name="id_wisata" value="<?php echo $d['id_wisata']; ?>">
                                 <input type="number" name="harga" class="form-control form-control-sm" value="<?php echo $d['harga']; ?>">
@@ -92,3 +105,4 @@ if(isset($_POST['edit'])){
     </div>
 </body>
 </html>
+<?php ob_end_flush(); ?>
