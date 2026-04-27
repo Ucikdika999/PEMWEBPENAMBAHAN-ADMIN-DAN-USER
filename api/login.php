@@ -26,10 +26,10 @@ if (isset($_POST['login'])) {
 
         // PERBAIKAN 3: Dashboard kamu ada di LUAR folder 'api', jadi gunakan ../
         if ($_SESSION['role'] == 'admin') {
-            header("Location: ../admin_dashboard.php");
+            header("Location: admin_dashboard.php");
             exit();
         } else {
-            header("Location: ../user_dashboard.php");
+            header("Location: user_dashboard.php");
             exit();
         }
     } else {
