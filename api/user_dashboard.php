@@ -1,9 +1,13 @@
 <?php
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
-
+// Pastikan tidak ada spasi sebelum tag PHP ini
+include "auth_check.php"; // Ini otomatis menjalankan session_start dan cek login
 include "koneksi.php";
+
+// Proteksi tambahan: Pastikan yang masuk adalah user
+if ($_SESSION['role'] !== 'user') {
+    header("Location: admin_dashboard.php");
+    exit();
+}
 
 // Fungsi untuk mengambil data BPS
 function ambilDataBPS() {
@@ -17,27 +21,10 @@ function ambilDataBPS() {
     return json_decode($response, true);
 }
 
-// Eksekusi pengambilan data
+// Eksekusi pengambilan data BPS
 $data_bps = ambilDataBPS();
 $nilai_bps = ($data_bps && isset($data_bps['status']) && $data_bps['status'] == 'OK') ? $data_bps['subject'][0]['val'] : "0";
 $label_bps = ($data_bps && isset($data_bps['status']) && $data_bps['status'] == 'OK') ? $data_bps['subject'][0]['label'] : "Data Pariwisata";
-
-// Proteksi Login
-if ($data && password_verify($pass, $data['password'])) {
-    // Set semua session yang dibutuhkan oleh kedua dashboard
-    $_SESSION['login'] = true; 
-    $_SESSION['user']  = $data['username'];
-    $_SESSION['role']  = strtolower(trim($data['role'])); // Pakai trim & lower untuk akurasi
-
-    // Arahkan berdasarkan role
-    if ($_SESSION['role'] === 'admin') {
-        header("Location: admin_dashboard.php");
-        exit();
-    } else {
-        header("Location: user_dashboard.php");
-        exit();
-    }
-}
 ?>
 
 <!DOCTYPE html>
@@ -58,8 +45,9 @@ if ($data && password_verify($pass, $data['password'])) {
             border: 1px solid rgba(255, 255, 255, 0.2);
             border-radius: 25px; padding: 40px; margin-top: 40px;
         }
-        /* Tambahan style agar teks destinasi terbaca jelas */
-        .destinasi-card { background: rgba(255,255,255,0.9); color: black; border-radius: 15px; }
+        .destinasi-card { background: rgba(255,255,255,0.9); color: black; border-radius: 15px; transition: 0.3s; }
+        .destinasi-card:hover { transform: translateY(-10px); }
+        .shadow-hover:hover { background: rgba(255, 255, 255, 0.15) !important; transform: translateY(-5px); }
     </style>
 </head>
 <body>
@@ -67,11 +55,12 @@ if ($data && password_verify($pass, $data['password'])) {
 <nav class="navbar navbar-dark bg-transparent pt-4 px-5">
     <div class="container-fluid">
         <a class="navbar-brand fw-bold fs-3" href="#"><i class="fas fa-mountain-sun me-2"></i>WISATA</a>
-        <a href="proses_beli.php?id=<?php echo $row['id_wisata']; ?>" class="btn btn-primary btn-sm w-100 rounded-pill">Beli Tiket</a>
-        <a href="logout.php" class="btn btn-outline-light rounded-pill px-4">Logout</a>
-        <a href="tiket_saya.php" class="btn btn-warning rounded-pill px-4 me-2 text-white">
-    <i class="fas fa-ticket-alt me-2"></i>Tiket Saya
-</a>
+        <div class="d-flex">
+            <a href="tiket_saya.php" class="btn btn-warning rounded-pill px-4 me-2 text-white">
+                <i class="fas fa-ticket-alt me-2"></i>Tiket Saya
+            </a>
+            <a href="logout.php" class="btn btn-outline-light rounded-pill px-4">Logout</a>
+        </div>
     </div>
 </nav>
 
@@ -79,7 +68,7 @@ if ($data && password_verify($pass, $data['password'])) {
     <div class="glass-card shadow-lg">
         <div class="row align-items-center mb-5">
             <div class="col-md-8">
-                <h1 class="display-5 fw-bold mb-0">Halo, <?php echo $_SESSION['user']; ?>!</h1>
+                <h1 class="display-5 fw-bold mb-0">Halo, <?php echo htmlspecialchars($_SESSION['user']); ?>!</h1>
                 <p class="lead opacity-75 mt-2">Cek status tiket dan jadwal liburanmu di sini.</p>
             </div>
             <div class="col-md-4 text-md-end text-center">
@@ -92,7 +81,6 @@ if ($data && password_verify($pass, $data['password'])) {
                 <h4 class="mb-4"><i class="fas fa-mountain-sun text-warning me-2"></i>Destinasi Wisata Hari Ini</h4>
                 <div class="row">
                     <?php
-                    // Logika CRUD (Read) untuk menampilkan wisata dari database
                     $query_wisata = mysqli_query($koneksi, "SELECT * FROM destinasi");
                     while($row = mysqli_fetch_assoc($query_wisata)):
                     ?>
@@ -131,38 +119,8 @@ if ($data && password_verify($pass, $data['password'])) {
                 </a>
             </div>
         </div>
-        </div> </div> <style>
-    .shadow-hover:hover {
-        background: rgba(255, 255, 255, 0.15) !important;
-        transform: translateY(-5px);
-    }
-</style>
-                </div>
-            </div>
-        </div>
     </div>
 </div>
-<div class="row mt-5">
-            <div class="col-md-12">
-                <div class="p-4 rounded-4" style="background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1);">
-                    <div class="row align-items-center">
-                        <div class="col-md-1 text-center">
-                            <i class="fas fa-chart-line fa-2x text-info"></i>
-                        </div>
-                        <div class="col-md-8">
-                            <h5 class="mb-0 fw-bold">Statistik Nasional: <?php echo $label_bps; ?></h5>
-                            <p class="small mb-0 opacity-75">Data ini ditarik secara real-time dari API BPS Pusat untuk referensi liburanmu.</p>
-                        </div>
-                        <div class="col-md-3 text-md-end mt-3 mt-md-0">
-                            <h3 class="fw-bold text-info mb-0"><?php echo number_format($nilai_bps, 0, ',', '.'); ?></h3>
-                            <span class="badge bg-info text-dark">Data Terkini</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        </div> </div> </body>
-</html>
 
 </body>
 </html>
