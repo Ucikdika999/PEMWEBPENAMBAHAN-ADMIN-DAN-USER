@@ -72,6 +72,7 @@ ob_end_flush();
                 <input type="password" name="password" class="form-control" placeholder="Masukkan Password" required>
             </div>
             <button class="btn btn-success w-100 fw-bold mb-3" name="login">MASUK SEKARANG</button>
+            
         </form>
         <p class="text-center small mb-0">Belum punya akun? <a href="register.php" class="text-success">Daftar</a></p>
     </div>
