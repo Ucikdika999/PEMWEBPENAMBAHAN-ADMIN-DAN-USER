@@ -1,7 +1,7 @@
 <?php
 ob_start();
 session_start();
-include "auth_check.php";
+include "api/auth_check.php";
 
 if ($data && password_verify($pass, $data['password'])) {
     // Set semua session yang dibutuhkan oleh kedua dashboard
