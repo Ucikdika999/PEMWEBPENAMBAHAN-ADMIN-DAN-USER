@@ -3,7 +3,7 @@ ob_start(); // Memulai output buffering untuk mencegah error "headers already se
 session_start();
 
 // PERBAIKAN 1: Karena login.php ada di folder 'api', naik satu tingkat (../) untuk panggil koneksi.php
-include "../koneksi.php";
+include "koneksi.php";
 
 if (isset($_POST['login'])) {
     $user = mysqli_real_escape_string($koneksi, $_POST['username']);
