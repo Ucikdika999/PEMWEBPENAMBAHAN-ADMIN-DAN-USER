@@ -1,42 +1,41 @@
 <?php
 ob_start(); // Memulai output buffering untuk mencegah error "headers already sent"
 session_start();
-include "koneksi.php";
 
-        if (isset($_POST['login'])) {
-             $user = mysqli_real_escape_string($koneksi, $_POST['username']);
-             $pass = $_POST['password'];
+// PERBAIKAN 1: Karena login.php ada di folder 'api', naik satu tingkat (../) untuk panggil koneksi.php
+include "../koneksi.php";
+
+if (isset($_POST['login'])) {
+    $user = mysqli_real_escape_string($koneksi, $_POST['username']);
+    $pass = $_POST['password'];
     
     // Cari user di database
-            $query = mysqli_query($koneksi, "SELECT * FROM users WHERE username='$user'");
-            $data = mysqli_fetch_assoc($query);
+    $query = mysqli_query($koneksi, "SELECT * FROM users WHERE username='$user'");
+    $data = mysqli_fetch_assoc($query);
 
     // Cek apakah user ada dan password cocok
-        if ($data && password_verify($pass, $data['password'])) {
-            $_SESSION['login'] = true;
-            $_SESSION['user']  = $data['username'];
-            $_SESSION['role']  = $data['role'];
+    if ($data && password_verify($pass, $data['password'])) {
+        $_SESSION['login'] = true;
+        $_SESSION['user']  = $data['username'];
+        $_SESSION['role']  = strtolower(trim($data['role']));
 
-    // DEBUG: Cek isi data sebelum loncat
-    // echo "Role ditemukan: " . $data['role']; 
-    // die(); 
+        // PERBAIKAN 2: Tambahkan Cookie agar auth_check.php bisa mengenali user
+        setcookie('user_id', $data['id'], time() + (7 * 24 * 3600), "/");
+        setcookie('user_nama', $data['username'], time() + (7 * 24 * 3600), "/");
+        setcookie('user_role', $_SESSION['role'], time() + (7 * 24 * 3600), "/");
 
-        if (strtolower($data['role']) == 'admin') {
-        header("Location: admin_dashboard.php");
-        exit();
+        // PERBAIKAN 3: Dashboard kamu ada di LUAR folder 'api', jadi gunakan ../
+        if ($_SESSION['role'] == 'admin') {
+            header("Location: ../admin_dashboard.php");
+            exit();
+        } else {
+            header("Location: ../user_dashboard.php");
+            exit();
+        }
     } else {
-        header("Location: user_dashboard.php");
-        exit();
+        // PERBAIKAN 4: Gunakan variabel error agar tidak merusak tampilan (daripada pakai die)
+        $error_msg = "Username atau Password salah!";
     }
-} else {
-    // Cek apakah user ketemu tapi password salah, atau user memang tidak ada
-    if(!$data) {
-        echo "Username tidak ditemukan di database!";
-    } else {
-        echo "Password salah! Pastikan database menggunakan password_hash.";
-    }
-    die();
-}
 }
 ob_end_flush();
 ?>
@@ -58,6 +57,11 @@ ob_end_flush();
 <body>
     <div class="card p-4 bg-white">
         <h3 class="text-center fw-bold mb-4">Login Petugas</h3>
+        
+        <?php if(isset($error_msg)): ?>
+            <div class="alert alert-danger py-2 small text-center"><?php echo $error_msg; ?></div>
+        <?php endif; ?>
+
         <form method="POST" action="">
             <div class="mb-3">
                 <label class="form-label">Username</label>
