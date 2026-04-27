@@ -1,17 +1,23 @@
 <?php
+ob_start();
 session_start();
 
-// 1. Proteksi Halaman
+// 1. GUNAKAN AUTH CHECK (Sangat Penting!)
+// Ini akan memastikan jika Session hilang, Cookie akan memulihkannya otomatis
+include "auth_check.php"; 
+include "koneksi.php";
+
+// 2. Proteksi Halaman (Gunakan session yang sudah dipastikan ada oleh auth_check)
 if(!isset($_SESSION['login'])) { 
     header("Location: login.php"); 
     exit; 
 }
 
-// 2. Ambil data dari Dashboard (Nilai 561 dari API)
+// 3. Ambil data dari Dashboard (Nilai 561 dari API)
 $subjek = isset($_GET['subjek']) ? $_GET['subjek'] : 'Pariwisata';
 $nilai = isset($_GET['nilai']) ? $_GET['nilai'] : '561';
 
-// Logika analisis sederhana untuk deskripsi
+// Logika analisis sederhana
 $status_kunjungan = ($nilai > 500) ? "Tren Meningkat" : "Stabil";
 ?>
 
