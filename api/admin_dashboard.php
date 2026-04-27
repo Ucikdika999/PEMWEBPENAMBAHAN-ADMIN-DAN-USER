@@ -1,11 +1,22 @@
 <?php
 session_start();
 
-// Gunakan isset() untuk cek dulu sebelum akses
-if (!isset($_SESSION['role']) || $_SESSION['role'] != 'admin') {
-    header('Location: login.php');
-    exit();
+if ($data && password_verify($pass, $data['password'])) {
+    // Set semua session yang dibutuhkan oleh kedua dashboard
+    $_SESSION['login'] = true; 
+    $_SESSION['user']  = $data['username'];
+    $_SESSION['role']  = strtolower(trim($data['role'])); // Pakai trim & lower untuk akurasi
+
+    // Arahkan berdasarkan role
+    if ($_SESSION['role'] === 'admin') {
+        header("Location: admin_dashboard.php");
+        exit();
+    } else {
+        header("Location: user_dashboard.php");
+        exit();
+    }
 }
+
 include "koneksi.php";
 
 // Menghitung Total Pengguna agar tidak error

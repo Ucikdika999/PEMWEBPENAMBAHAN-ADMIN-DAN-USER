@@ -23,9 +23,20 @@ $nilai_bps = ($data_bps && isset($data_bps['status']) && $data_bps['status'] == 
 $label_bps = ($data_bps && isset($data_bps['status']) && $data_bps['status'] == 'OK') ? $data_bps['subject'][0]['label'] : "Data Pariwisata";
 
 // Proteksi Login
-if(!isset($_SESSION['login'])) { 
-    header("Location: login.php"); 
-    exit; 
+if ($data && password_verify($pass, $data['password'])) {
+    // Set semua session yang dibutuhkan oleh kedua dashboard
+    $_SESSION['login'] = true; 
+    $_SESSION['user']  = $data['username'];
+    $_SESSION['role']  = strtolower(trim($data['role'])); // Pakai trim & lower untuk akurasi
+
+    // Arahkan berdasarkan role
+    if ($_SESSION['role'] === 'admin') {
+        header("Location: admin_dashboard.php");
+        exit();
+    } else {
+        header("Location: user_dashboard.php");
+        exit();
+    }
 }
 ?>
 
