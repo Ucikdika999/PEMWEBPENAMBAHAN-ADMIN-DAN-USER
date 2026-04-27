@@ -9,7 +9,7 @@ include "koneksi.php";
 // 2. Keamanan: Pastikan hanya admin yang bisa akses
 // Kita gunakan isset() untuk mencegah "Undefined array key"
 if(!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') { 
-    header("Location: login.php"); 
+    header("Location: login.php?pesan=bukan_admin"); 
     exit; 
 }
 
