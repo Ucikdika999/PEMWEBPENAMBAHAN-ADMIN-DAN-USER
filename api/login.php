@@ -1,9 +1,9 @@
 <?php
-ob_start();
+ob_start(); // Memulai output buffering untuk mencegah error "headers already sent"
 session_start();
 
-// PERBAIKAN 1: Karena login.php di dalam folder 'api', naik satu tingkat untuk cari koneksi.php
-include "../koneksi.php";
+// PERBAIKAN 1: Karena login.php ada di folder 'api', naik satu tingkat (../) untuk panggil koneksi.php
+include "koneksi.php";
 
 if (isset($_POST['login'])) {
     $user = mysqli_real_escape_string($koneksi, $_POST['username']);
@@ -15,26 +15,25 @@ if (isset($_POST['login'])) {
 
     // Cek apakah user ada dan password cocok
     if ($data && password_verify($pass, $data['password'])) {
-        // Simpan ke SESSION
         $_SESSION['login'] = true;
         $_SESSION['user']  = $data['username'];
         $_SESSION['role']  = strtolower(trim($data['role']));
 
-        // PERBAIKAN 2: Simpan ke COOKIE agar auth_check.php mengenali session ini
+        // PERBAIKAN 2: Tambahkan Cookie agar auth_check.php bisa mengenali user
         setcookie('user_id', $data['id'], time() + (7 * 24 * 3600), "/");
         setcookie('user_nama', $data['username'], time() + (7 * 24 * 3600), "/");
         setcookie('user_role', $_SESSION['role'], time() + (7 * 24 * 3600), "/");
 
-        // PERBAIKAN 3: REDIRECT SESUAI ROLE (Harus pakai ../ karena dashboard di luar folder api)
+        // PERBAIKAN 3: Dashboard kamu ada di LUAR folder 'api', jadi gunakan ../
         if ($_SESSION['role'] == 'admin') {
             header("Location: ../admin_dashboard.php");
             exit();
         } else {
-            // Pastikan kamu punya file user_dashboard.php di folder utama
             header("Location: ../user_dashboard.php");
             exit();
         }
     } else {
+        // PERBAIKAN 4: Gunakan variabel error agar tidak merusak tampilan (daripada pakai die)
         $error_msg = "Username atau Password salah!";
     }
 }
@@ -44,10 +43,14 @@ ob_end_flush();
 <html lang="id">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login | WISATA</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        body { height: 100vh; display: flex; justify-content: center; align-items: center; background: #198754; font-family: sans-serif; }
+        body { 
+            height: 100vh; display: flex; justify-content: center; 
+            align-items: center; background: #198754; font-family: sans-serif;
+        }
         .card { border-radius: 15px; width: 350px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
     </style>
 </head>
