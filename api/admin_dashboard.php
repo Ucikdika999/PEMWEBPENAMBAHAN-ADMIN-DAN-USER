@@ -77,7 +77,7 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
 
 <div class="container">
     <div class="welcome">
-        <h2>Selamat Datang, <?= htmlspecialchars($_SESSION['username']) ?>!</h2>
+        <h2>Selamat Datang, <?= htmlspecialchars($_SESSION['user']) ?>!</h2>
         <p>Panel Admin - Sistem Monitoring Tiket Wisata</p>
     </div>
 
