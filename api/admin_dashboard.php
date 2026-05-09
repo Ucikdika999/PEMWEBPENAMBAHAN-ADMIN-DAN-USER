@@ -154,7 +154,7 @@ $total_admin = mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT COUNT(*) as t F
                         </span>
                     </td>
                     <td>
-                        <?php if ($row['username'] !== $_SESSION['username']): ?>
+                        <?php if ($row['username'] !== $_SESSION['user']): ?>
                         <form method="POST" action="delete_user.php" onsubmit="return confirm('Hapus user ini?')">
                             <input type="hidden" name="id" value="<?= $row['id'] ?>">
                             <button type="submit" class="btn-danger">🗑️ Hapus</button>
