@@ -92,7 +92,7 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
 
     <?php
     // Koneksi DB
-    include 'db.php';
+    include 'koneksi.php';
 
     // Hitung statistik
     $total_users = $conn->query("SELECT COUNT(*) FROM users WHERE role='user'")->fetchColumn();
