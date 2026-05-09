@@ -83,7 +83,7 @@ if ($_SESSION['role'] !== 'user') {
         <h3>🎫 Tiket Saya</h3>
         <div class="ticket">
             <h2>🏔️ Tiket Masuk Wisata</h2>
-            <div class="ticket-id">WST-<?= strtoupper(substr(md5($_SESSION['username']), 0, 8)) ?></div>
+            <div class="ticket-id">WST-<?= strtoupper(substr(md5($_SESSION['user']), 0, 8)) ?></div>
             <div class="ticket-date">Berlaku: <?= date('d M Y') ?></div>
         </div>
         <center><a href="#" class="btn btn-primary" style="margin-top:15px;">📥 Unduh Tiket PDF</a></center>
