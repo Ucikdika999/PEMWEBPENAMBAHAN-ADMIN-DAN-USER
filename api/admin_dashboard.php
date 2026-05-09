@@ -1,10 +1,17 @@
 <?php
-session_start();
+ob_start();
+include "auth_check.php";
+include "koneksi.php";
 
-if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
-    header('Location: login.php');
+if ($_SESSION['role'] !== 'admin') {
+    header("Location: user_dashboard.php");
     exit();
 }
+
+// Statistik
+$total_all   = mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT COUNT(*) as t FROM users"))['t'];
+$total_users = mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT COUNT(*) as t FROM users WHERE role='user'"))['t'];
+$total_admin = mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT COUNT(*) as t FROM users WHERE role='admin'"))['t'];
 ?>
 <!DOCTYPE html>
 <html lang="id">
