@@ -80,6 +80,14 @@ $total_admin = mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT COUNT(*) as t F
 <nav class="navbar">
     <h1>🏔️ WISATA Admin</h1>
     <a href="logout.php" class="logout-btn">🚪 Logout</a>
+    <div style="display:flex; gap:10px;">
+        <a href="kelola_wisata.php" class="logout-btn">🏝️ Kelola Wisata</a>
+        <a href="kelola_user.php" class="logout-btn">👥 Kelola User</a>
+        <a href="laporan_pesanan.php" class="logout-btn">📋 Laporan Pesanan</a>
+        <a href="profil.php" class="logout-btn">👤 Profil</a>
+        <a href="logout.php" class="logout-btn" style="background:rgba(255,80,80,0.4);">🚪 Logout</a>
+    </div>
+</nav>
 </nav>
 
 <div class="container">
