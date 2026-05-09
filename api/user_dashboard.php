@@ -1,10 +1,13 @@
 <?php
-session_start();
-if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'user') {
-    header('Location: login.php');
+ob_start();
+include "auth_check.php";
+include "koneksi.php";
+
+if ($_SESSION['role'] !== 'user') {
+    header("Location: admin_dashboard.php");
     exit();
 }
-include 'koneksi.php';
+?>
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -64,7 +67,7 @@ include 'koneksi.php';
         <h3>👤 Profil Saya</h3>
         <div class="info-row">
             <span class="info-label">Username</span>
-            <span class="info-value"><?= htmlspecialchars($_SESSION['username']) ?></span>
+            <span class="info-value"><?= htmlspecialchars($_SESSION['user']) ?></span>
         </div>
         <div class="info-row">
             <span class="info-label">Role</span>
