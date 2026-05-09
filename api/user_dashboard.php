@@ -8,7 +8,6 @@ if ($_SESSION['role'] !== 'user') {
     exit();
 }
 ?>
-?>
 <!DOCTYPE html>
 <html lang="id">
 <head>
