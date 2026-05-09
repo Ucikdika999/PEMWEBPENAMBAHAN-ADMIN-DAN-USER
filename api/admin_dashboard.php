@@ -98,13 +98,11 @@ $total_admin = mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT COUNT(*) as t F
     ?>
 
     <?php
-    // Koneksi DB
     include 'koneksi.php';
 
-    // Hitung statistik
-    $total_users = $conn->query("SELECT COUNT(*) FROM users WHERE role='user'")->fetchColumn();
-    $total_admin = $conn->query("SELECT COUNT(*) FROM users WHERE role='admin'")->fetchColumn();
-    $total_all   = $conn->query("SELECT COUNT(*) FROM users")->fetchColumn();
+    $total_all   = mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT COUNT(*) as t FROM users"))['t'];
+    $total_users = mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT COUNT(*) as t FROM users WHERE role='user'"))['t'];
+    $total_admin = mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT COUNT(*) as t FROM users WHERE role='admin'"))['t'];
     ?>
 
     <div class="stats-grid">
@@ -135,9 +133,9 @@ $total_admin = mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT COUNT(*) as t F
             </thead>
             <tbody>
             <?php
-            $stmt = $conn->query("SELECT * FROM users ORDER BY id ASC");
+            $stmt = mysqli_query($koneksi, "SELECT * FROM users ORDER BY id ASC");
             $no = 1;
-            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)):
+            while ($row = mysqli_fetch_assoc($stmt)):
             ?>
                 <tr>
                     <td><?= $no++ ?></td>
