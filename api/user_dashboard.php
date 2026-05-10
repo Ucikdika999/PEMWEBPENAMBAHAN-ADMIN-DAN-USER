@@ -1,4 +1,9 @@
 <?php
+session_start();
+echo "Role: " . $_SESSION['role'] . " | User: " . $_SESSION['user'];
+exit();
+?>
+<?php
 ob_start();
 include "auth_check.php";
 include "koneksi.php";
