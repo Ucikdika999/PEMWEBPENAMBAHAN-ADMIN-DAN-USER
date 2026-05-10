@@ -21,16 +21,16 @@ if (isset($_POST['login'])) {
 
         // ✅ PERBAIKAN: tambah ../ karena login.php ada di dalam folder api/
         if ($_SESSION['role'] == 'admin') {
-            header("Location: ../admin_dashboard.php");
-            exit();
-        } else {
-            header("Location: ../user_dashboard.php");
-            exit();
+    header("Location: admin_dashboard.php");
+    exit();
+} else {
+    header("Location: user_dashboard.php");
+    exit();
+}
         }
     } else {
         $error_msg = "Username atau Password salah!";
     }
-}
 ob_end_flush();
 ?>
 <!DOCTYPE html>
