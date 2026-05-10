@@ -4,15 +4,14 @@ session_start();
 
 // PERBAIKAN 1: Karena login.php ada di folder 'api', naik satu tingkat (../) untuk panggil koneksi.php
 include "koneksi.php";
-<?php
-session_start();
-include "koneksi.php";
 
-// Ambil data berdasarkan user yang sedang login
-$user_login = $_SESSION['user'];
-$query = mysqli_query($koneksi, "SELECT * FROM users WHERE username='$user_login'");
-$data = mysqli_fetch_assoc($query);
-?>
+if (isset($_POST['login'])) {
+    $user = mysqli_real_escape_string($koneksi, $_POST['username']);
+    $pass = $_POST['password'];
+    
+    // Cari user di database
+    $query = mysqli_query($koneksi, "SELECT * FROM users WHERE username='$user'");
+    $data = mysqli_fetch_assoc($query);
 
     // Cek apakah user ada dan password cocok
     if ($data && password_verify($pass, $data['password'])) {
