@@ -11,7 +11,7 @@ if (!isset($_SESSION['login'])) {
     if (isset($_COOKIE['user_id']) && isset($_COOKIE['user_nama']) && isset($_COOKIE['user_role'])) {
         $_SESSION['login'] = true;
         $_SESSION['user']  = $_COOKIE['user_nama'];
-        $_SESSION['role']  = $_COOKIE['user_role'];
+        $_SESSION['role']  = $_COOKIE['role'];
     } else {
         // Hanya redirect jika user TIDAK sedang di login.php
         if ($halaman_sekarang !== 'login.php') {
