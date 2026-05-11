@@ -25,7 +25,7 @@ if(isset($_POST['daftar'])){
             $sql = "INSERT INTO users (username, password, role) VALUES ('$user', '$pass_enkrip', '$role')";
             
             if(mysqli_query($koneksi, $sql)){
-                echo "<script>alert('Registrasi Berhasil! Silakan Login.'); window.location='login.php';</script>";
+                echo "<script>alert('Registrasi Berhasil! Silakan Login.'); window.location='/api/login.php';</script>";
                 exit();
             } else {
                 echo "Error: " . mysqli_error($koneksi);

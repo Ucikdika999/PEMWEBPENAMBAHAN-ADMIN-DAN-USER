@@ -15,7 +15,7 @@ if (!isset($_SESSION['login'])) {
     } else {
         // Hanya redirect jika user TIDAK sedang di login.php
         if ($halaman_sekarang !== 'login.php') {
-            header("Location: login.php");
+            header("Location: /api/login.php");
             exit();
         }
     }

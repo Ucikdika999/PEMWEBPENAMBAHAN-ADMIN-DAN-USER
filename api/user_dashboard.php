@@ -4,7 +4,7 @@ include "auth_check.php";
 include "koneksi.php";
 
 if ($_SESSION['role'] !== 'user') {
-    header("Location: admin_dashboard.php");
+    header("Location: /api/admin_dashboard.php");
     exit();
 }
 

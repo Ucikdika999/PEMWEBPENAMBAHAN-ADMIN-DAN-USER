@@ -5,7 +5,7 @@ include "auth_check.php";
 include "koneksi.php";
 
 if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
-    header("Location: login.php");
+    header("Location: /api/login.php");
     exit();
 }
 

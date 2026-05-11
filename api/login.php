@@ -22,9 +22,9 @@ if (isset($_POST['login'])) {
         ob_end_clean(); // bersihkan buffer dulu sebelum redirect
 
         if ($_SESSION['role'] == 'admin') {
-            header("Location: admin_dashboard.php");
+            header("Location: /api/admin_dashboard.php");
         } else {
-            header("Location: user_dashboard.php");
+            header("Location: /api/user_dashboard.php");
         }
         exit();
 
