@@ -2,6 +2,18 @@
 ob_start();
 session_start();
 include "koneksi.php";
+// DEBUG SEMENTARA - hapus setelah berhasil
+if (isset($_POST['login'])) {
+    $user = mysqli_real_escape_string($koneksi, $_POST['username']);
+    $pass = $_POST['password'];
+    $query = mysqli_query($koneksi, "SELECT * FROM users WHERE username='$user'");
+    $data = mysqli_fetch_assoc($query);
+    
+    echo "User ditemukan: " . ($data ? "YA" : "TIDAK") . "<br>";
+    echo "Password cocok: " . ($data && password_verify($pass, $data['password']) ? "YA" : "TIDAK") . "<br>";
+    echo "Role: " . ($data['role'] ?? 'kosong') . "<br>";
+    exit();
+}
 
 if (isset($_POST['login'])) {
     $user = mysqli_real_escape_string($koneksi, $_POST['username']);
