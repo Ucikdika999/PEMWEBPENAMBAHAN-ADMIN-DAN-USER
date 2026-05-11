@@ -8,29 +8,28 @@ if (isset($_POST['login'])) {
     $pass = $_POST['password'];
     
     $query = mysqli_query($koneksi, "SELECT * FROM users WHERE username='$user'");
-    $data = mysqli_fetch_assoc($query);
+    $data  = mysqli_fetch_assoc($query);
 
     if ($data && password_verify($pass, $data['password'])) {
         $_SESSION['login'] = true;
         $_SESSION['user']  = $data['username'];
         $_SESSION['role']  = strtolower(trim($data['role']));
 
-        setcookie('user_id', $data['id'], time() + (7 * 24 * 3600), "/");
-        setcookie('user_nama', $data['username'], time() + (7 * 24 * 3600), "/");
-        setcookie('user_role', $_SESSION['role'], time() + (7 * 24 * 3600), "/");
+        setcookie('user_id',   $data['id'],       time() + (7 * 24 * 3600), "/");
+        setcookie('user_nama', $data['username'],  time() + (7 * 24 * 3600), "/");
+        setcookie('user_role', $_SESSION['role'],  time() + (7 * 24 * 3600), "/");
 
-        // ✅ PERBAIKAN: tambah ../ karena login.php ada di dalam folder api/
         if ($_SESSION['role'] == 'admin') {
-    header("Location: admin_dashboard.php");
-    exit();
-} else {
-    header("Location: user_dashboard.php");
-    exit();
-}
+            header("Location: admin_dashboard.php");
+        } else {
+            header("Location: user_dashboard.php");
         }
+        exit();
+
     } else {
         $error_msg = "Username atau Password salah!";
     }
+}
 ob_end_flush();
 ?>
 <!DOCTYPE html>
