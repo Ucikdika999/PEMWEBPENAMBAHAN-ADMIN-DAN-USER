@@ -2,18 +2,6 @@
 ob_start();
 session_start();
 include "koneksi.php";
-// DEBUG SEMENTARA - hapus setelah berhasil
-if (isset($_POST['login'])) {
-    $user = mysqli_real_escape_string($koneksi, $_POST['username']);
-    $pass = $_POST['password'];
-    $query = mysqli_query($koneksi, "SELECT * FROM users WHERE username='$user'");
-    $data = mysqli_fetch_assoc($query);
-    
-    echo "User ditemukan: " . ($data ? "YA" : "TIDAK") . "<br>";
-    echo "Password cocok: " . ($data && password_verify($pass, $data['password']) ? "YA" : "TIDAK") . "<br>";
-    echo "Role: " . ($data['role'] ?? 'kosong') . "<br>";
-    exit();
-}
 
 if (isset($_POST['login'])) {
     $user = mysqli_real_escape_string($koneksi, $_POST['username']);
@@ -31,6 +19,8 @@ if (isset($_POST['login'])) {
         setcookie('user_nama', $data['username'],  time() + (7 * 24 * 3600), "/");
         setcookie('user_role', $_SESSION['role'],  time() + (7 * 24 * 3600), "/");
 
+        ob_end_clean(); // bersihkan buffer dulu sebelum redirect
+
         if ($_SESSION['role'] == 'admin') {
             header("Location: admin_dashboard.php");
         } else {
@@ -42,7 +32,6 @@ if (isset($_POST['login'])) {
         $error_msg = "Username atau Password salah!";
     }
 }
-ob_end_flush();
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -64,7 +53,7 @@ ob_end_flush();
         <h3 class="text-center fw-bold mb-4">Login Petugas</h3>
         
         <?php if(isset($error_msg)): ?>
-            <div class="alert alert-danger py-2 small text-center"><?php echo $error_msg; ?></div>
+            <div class="alert alert-danger py-2 small text-center"><?= $error_msg ?></div>
         <?php endif; ?>
 
         <form method="POST" action="">
