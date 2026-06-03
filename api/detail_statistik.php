@@ -6,6 +6,8 @@ session_start();
 // Ini akan memastikan jika Session hilang, Cookie akan memulihkannya otomatis
 include "auth_check.php"; 
 include "koneksi.php";
+include "catat_kunjungan.php";
+catatKunjungan($koneksi);
 
 // 2. Proteksi Halaman (Gunakan session yang sudah dipastikan ada oleh auth_check)
 if(!isset($_SESSION['login'])) { 

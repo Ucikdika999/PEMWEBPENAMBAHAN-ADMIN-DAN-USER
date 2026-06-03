@@ -3,6 +3,8 @@ ob_start();
 session_start();
 include "auth_check.php";
 include "koneksi.php";
+include "catat_kunjungan.php";
+catatKunjungan($koneksi);
 
 if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
     header("Location: login.php");

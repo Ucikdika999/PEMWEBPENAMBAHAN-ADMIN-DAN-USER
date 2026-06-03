@@ -2,6 +2,8 @@
 ob_start();
 include "auth_check.php";
 include "koneksi.php";
+include "catat_kunjungan.php";
+catatKunjungan($koneksi);
 
 if ($_SESSION['role'] !== 'user') {
     header("Location: /api/admin_dashboard.php");
