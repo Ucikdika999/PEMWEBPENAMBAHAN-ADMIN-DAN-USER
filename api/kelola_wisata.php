@@ -37,39 +37,20 @@ if (isset($_POST['tambah'])) {
     $musim     = mysqli_real_escape_string($koneksi, $_POST['musim_terbaik']);
     $deskripsi = mysqli_real_escape_string($koneksi, $_POST['deskripsi']);
     $foto_url  = mysqli_real_escape_string($koneksi, $_POST['foto_url']);
-    
-    // Ambil fasilitas, jika kosong jadikan array kosong lalu di-encode ke JSON
-    $fasilitas_arr = $_POST['fasilitas'] ?? [];
-    $fasilitas     = mysqli_real_escape_string($koneksi, json_encode($fasilitas_arr));
+    $fasilitas = json_encode($_POST['fasilitas'] ?? []);
 
-    // Query INSERT yang sudah disamakan jumlah kolom dan values-nya
-    $sql = "INSERT INTO destinasi (
-                nama_wisata, lokasi, harga, jenis_wisata, status_buka, 
-                jam_buka, jam_tutup, cuaca, musim_terbaik, deskripsi, 
-                foto_url, fasilitas
-            ) VALUES (
-                '$nama', '$lokasi', '$harga', '$jenis', '$status', 
-                '$jam_buka', '$jam_tutup', '$cuaca', '$musim', '$deskripsi', 
-                '$foto_url', '$fasilitas'
-            )";
-
-// Baris 56: Awal deklarasi query SQL
-$sql = "INSERT INTO destinasi (
-            nama_wisata, lokasi, harga, jenis_wisata, status_buka, 
-            jam_buka, jam_tutup, cuaca, musim_terbaik, deskripsi, 
-            foto_url, fasilitas
-        ) VALUES (
-            '$nama', '$lokasi', '$harga', '$jenis', '$status', 
-            '$jam_buka', '$jam_tutup', '$cuaca', '$musim', '$deskripsi', 
-            '$foto_url', '$fasilitas'
-        )"; 
-// Baris 67: Akhir dari tanda penutup tag string query
-// Baris 69
-if (mysqli_query($koneksi, $sql)) { 
-    $pesan_ok = "Destinasi berhasil ditambahkan!"; 
-} else { 
-    $pesan_err = "Gagal: " . mysqli_error($koneksi); 
+    $sql = "INSERT INTO destinasi (nama_wisata, lokasi, harga, jenis_wisata, status_buka, jam_buka, jam_tutup, cuaca, musim_terbaik, deskripsi, foto_url, fasilitas)
+            VALUES ('$nama','$lokasi','$harga','$jenis','$status','$jam_buka','$jam_tutup','$cuaca','$musim','$deskripsi','$foto_url','$fasilitas')";
+    if (mysqli_query($koneksi, $sql)) { $pesan_ok = "Destinasi berhasil ditambahkan!"; }
+    else $pesan_err = "Gagal: " . mysqli_error($koneksi);
 }
+
+if (isset($_GET['hapus'])) {
+    $id = (int)$_GET['hapus'];
+    mysqli_query($koneksi, "DELETE FROM destinasi WHERE id_wisata='$id'");
+    header("Location: kelola_wisata.php"); exit();
+}
+
 if (isset($_POST['edit'])) {
     $id        = (int)$_POST['id_wisata'];
     $lokasi    = mysqli_real_escape_string($koneksi, $_POST['lokasi'] ?? '');
@@ -181,7 +162,7 @@ tbody tr:hover td{background:#f8fafc;}
 
 /* BADGES */
 .badge-kat{padding:4px 10px;border-radius:20px;font-size:.72rem;font-weight:700;display:inline-block;}
-.kat-alam    {background:#d1fae5;color:#065f46;}
+.kat-alam   {background:#d1fae5;color:#065f46;}
 .kat-pantai {background:#dbeafe;color:#1d4ed8;}
 .kat-gunung {background:#f0fdf4;color:#166534;}
 .kat-museum {background:#fef3c7;color:#b45309;}
@@ -250,8 +231,8 @@ tbody tr:hover td{background:#f8fafc;}
     </div>
     <div class="sb-footer">
         <div class="admin-tag">
-            <div class="admin-ava"><?= strtoupper(substr($_SESSION['user'] ?? 'A',0,1)) ?></div>
-            <div><div class="admin-name"><?= htmlspecialchars($_SESSION['user'] ?? 'Admin') ?></div><div class="admin-role">Administrator</div></div>
+            <div class="admin-ava"><?= strtoupper(substr($_SESSION['user'],0,1)) ?></div>
+            <div><div class="admin-name"><?= htmlspecialchars($_SESSION['user']) ?></div><div class="admin-role">Administrator</div></div>
         </div>
         <a href="logout.php" class="nav-item logout"><div class="ni-icon"><i class="fas fa-power-off"></i></div> Logout</a>
     </div>
@@ -264,6 +245,7 @@ tbody tr:hover td{background:#f8fafc;}
     <?php if($pesan_ok): ?><div class="alert-ok"><i class="fas fa-check-circle"></i><?= $pesan_ok ?></div><?php endif; ?>
     <?php if($pesan_err): ?><div class="alert-err"><i class="fas fa-exclamation-circle"></i><?= $pesan_err ?></div><?php endif; ?>
 
+    <!-- TOOLBAR -->
     <form method="GET" class="toolbar">
         <div class="search-wrap">
             <i class="fas fa-search"></i>
@@ -284,6 +266,7 @@ tbody tr:hover td{background:#f8fafc;}
         </button>
     </form>
 
+    <!-- TABLE -->
     <div class="table-card">
         <div style="overflow-x:auto;">
         <table>
@@ -313,6 +296,7 @@ tbody tr:hover td{background:#f8fafc;}
                 foreach ($all_rows as $i => $d):
                     $jenis = $d['jenis_wisata'] ?? 'umum';
                     $jl = $jenis_labels[$jenis] ?? ['label'=>ucfirst($jenis),'cls'=>'kat-umum'];
+                    $fasilitas_arr = json_decode($d['fasilitas'] ?? '[]', true) ?: [];
                     $jam_buka  = date('H:i', strtotime($d['jam_buka'] ?? '08:00'));
                     $jam_tutup = date('H:i', strtotime($d['jam_tutup'] ?? '17:00'));
             ?>
@@ -321,7 +305,7 @@ tbody tr:hover td{background:#f8fafc;}
                 <td>
                     <?php if (!empty($d['foto_url'])): ?>
                         <img src="<?= htmlspecialchars($d['foto_url']) ?>" class="foto-thumb"
-                             onerror="this.parentNode.innerHTML='<div class=no-foto><i class=\'fas fa-image\'></i></div>'">
+                             onerror="this.parentNode.innerHTML='<div class=no-foto><i class=fas\ fa-image></i></div>'">
                     <?php else: ?>
                         <div class="no-foto"><i class="fas fa-image"></i></div>
                     <?php endif; ?>
@@ -377,6 +361,7 @@ tbody tr:hover td{background:#f8fafc;}
     </div>
 </main>
 
+<!-- MODAL TAMBAH -->
 <div class="modal-overlay" id="modalTambah">
 <div class="modal-box">
     <div class="modal-title"><i class="fas fa-plus-circle" style="color:var(--accent);"></i> Tambah Destinasi Baru</div>
@@ -413,24 +398,13 @@ tbody tr:hover td{background:#f8fafc;}
                 <label>Jam Tutup</label>
                 <input type="time" name="jam_tutup" value="17:00">
             </div>
-            
             <div class="form-group">
                 <label>Kondisi Cuaca</label>
-                <div style="display:flex;align-items:center;gap:8px;">
-                    <select name="cuaca" id="cuacaTambah" style="flex:1;">
-                        <option>Cerah</option>
-                        <option>Cerah Berawan</option>
-                        <option>Berawan</option>
-                        <option>Hujan Ringan</option>
-                        <option>Hujan Lebat</option>
-                    </select>
-                    <button type="button" class="btn-primary-c" style="padding:8px 12px;white-space:nowrap;" onclick="fetchCuaca('Tambah')">
-                        <i class="fas fa-sync-alt"></i> Auto
-                    </button>
-                </div>
-                <div id="cuacaInfoTambah" style="margin-top:6px;font-size:.78rem;color:#64748b;display:none;"></div>
+                <select name="cuaca">
+                    <option>Cerah</option><option>Cerah Berawan</option>
+                    <option>Berawan</option><option>Hujan Ringan</option><option>Hujan Lebat</option>
+                </select>
             </div>
-
             <div class="form-group">
                 <label>Musim Terbaik</label>
                 <input type="text" name="musim_terbaik" placeholder="April – Oktober">
@@ -462,6 +436,7 @@ tbody tr:hover td{background:#f8fafc;}
 </div>
 </div>
 
+<!-- MODAL EDIT (dynamic) -->
 <div class="modal-overlay" id="modalEdit">
 <div class="modal-box">
     <div class="modal-title"><i class="fas fa-edit" style="color:var(--warning);"></i> Edit Destinasi</div>
@@ -495,24 +470,13 @@ tbody tr:hover td{background:#f8fafc;}
                 <label>Jam Tutup</label>
                 <input type="time" name="jam_tutup" id="editJamTutup">
             </div>
-            
             <div class="form-group">
                 <label>Kondisi Cuaca</label>
-                <div style="display:flex;align-items:center;gap:8px;">
-                    <select name="cuaca" id="editCuaca" style="flex:1;">
-                        <option>Cerah</option>
-                        <option>Cerah Berawan</option>
-                        <option>Berawan</option>
-                        <option>Hujan Ringan</option>
-                        <option>Hujan Lebat</option>
-                    </select>
-                    <button type="button" class="btn-primary-c" style="padding:8px 12px;white-space:nowrap;" onclick="fetchCuaca('Edit')">
-                        <i class="fas fa-sync-alt"></i> Auto
-                    </button>
-                </div>
-                <div id="cuacaInfoEdit" style="margin-top:6px;font-size:.78rem;color:#64748b;display:none;"></div>
+                <select name="cuaca" id="editCuaca">
+                    <option>Cerah</option><option>Cerah Berawan</option>
+                    <option>Berawan</option><option>Hujan Ringan</option><option>Hujan Lebat</option>
+                </select>
             </div>
-
             <div class="form-group">
                 <label>Musim Terbaik</label>
                 <input type="text" name="musim_terbaik" id="editMusim">
@@ -572,67 +536,25 @@ function openEditModal(d) {
     document.getElementById('editFoto').value = d.foto_url || '';
     document.getElementById('editDeskripsi').value = d.deskripsi || '';
     document.getElementById('editStatus').checked = d.status_buka == 1;
-    
-    // Reset tampilan info cuaca agar tidak membawa status sisa fetch sebelumnya
-    document.getElementById('cuacaInfoEdit').style.display = 'none';
-    document.getElementById('cuacaInfoEdit').innerHTML = '';
-
     const jenis = d.jenis_wisata || 'umum';
     document.getElementById('editJenis').value = jenis;
     let fas = [];
     try { fas = JSON.parse(d.fasilitas || '[]'); } catch(e){}
     const el = document.getElementById('fasilitasEdit');
     el.dataset.checked = JSON.stringify(fas);
-    
-    // Perbaikan typo "updateFasilit" yang kemarin terpotong
     updateFasilitas('Edit', jenis);
-    
     document.getElementById('modalEdit').classList.add('show');
 }
 
-// FUNGSI AUTO FETCH WEATHER API
-function fetchCuaca(suffix) {
-    const lokasiEl = suffix === 'Tambah'
-        ? document.querySelector('#modalTambah input[name="lokasi"]')
-        : document.getElementById('editLokasi');
+document.addEventListener('DOMContentLoaded', () => {
+    const elT = document.getElementById('fasilitasTambah');
+    if (elT) { elT.dataset.checked = '[]'; updateFasilitas('Tambah', 'alam'); }
+});
 
-    const selectEl = suffix === 'Tambah'
-        ? document.getElementById('cuacaTambah')
-        : document.getElementById('editCuaca');
-
-    const infoEl = document.getElementById('cuacaInfo' + suffix);
-    const lokasi = lokasiEl ? lokasiEl.value.trim() : '';
-
-    if (!lokasi) {
-        alert('Isi kolom Lokasi dulu sebelum fetch cuaca otomatis.');
-        return;
-    }
-
-    infoEl.style.display = 'block';
-    infoEl.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Mengambil data cuaca...';
-
-    fetch('get_cuaca.php?lokasi=' + encodeURIComponent(lokasi))
-        .then(r => r.json())
-        .then(data => {
-            if (data.error) {
-                infoEl.innerHTML = '<i class="fas fa-exclamation-triangle" style="color:#ef4444"></i> ' + data.error;
-                return;
-            }
-            selectEl.value = data.label;
-            infoEl.innerHTML =
-                `<img src="${data.icon}" style="width:24px;vertical-align:middle;"> ` +
-                `<strong>${data.label}</strong> — ${data.desc}, <strong>${data.suhu}°C</strong> ` +
-                `<span style="color:#10b981;font-weight:600;">(live)</span>`;
-        })
-        .catch(() => {
-            infoEl.innerHTML = '<i class="fas fa-exclamation-triangle" style="color:#ef4444"></i> Gagal menghubungi server.';
-        });
-}
-
-// Inisialisasi awal saat dokumen selesai dimuat
-document.addEventListener("DOMContentLoaded", function() {
-    updateFasilitas('Tambah', 'alam');
+document.querySelectorAll('.modal-overlay').forEach(mo => {
+    mo.addEventListener('click', e => { if(e.target === mo) mo.classList.remove('show'); });
 });
 </script>
 </body>
 </html>
+<?php ob_end_flush(); ?>
