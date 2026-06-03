@@ -37,15 +37,28 @@ if (isset($_POST['tambah'])) {
     $musim     = mysqli_real_escape_string($koneksi, $_POST['musim_terbaik']);
     $deskripsi = mysqli_real_escape_string($koneksi, $_POST['deskripsi']);
     $foto_url  = mysqli_real_escape_string($koneksi, $_POST['foto_url']);
-    $fasilitas = json_encode($_POST['fasilitas'] ?? []);
+    
+    // Ambil fasilitas, jika kosong jadikan array kosong lalu di-encode ke JSON
+    $fasilitas_arr = $_POST['fasilitas'] ?? [];
+    $fasilitas     = mysqli_real_escape_string($koneksi, json_encode($fasilitas_arr));
 
-// Bagian INSERT (Sekitar baris 43-44)
-$sql = "INSERT INTO destinasi (nama_wisata, alamat, harga, jenis_wisata, ...) 
-        VALUES ('$nama','$lokasi','$harga','$jenis',...)";
-    if (mysqli_query($koneksi, $sql)) { $pesan_ok = "Destinasi berhasil ditambahkan!"; }
-    else $pesan_err = "Gagal: " . mysqli_error($koneksi);
+    // Query INSERT yang sudah disamakan jumlah kolom dan values-nya
+    $sql = "INSERT INTO destinasi (
+                nama_wisata, lokasi, harga, jenis_wisata, status_buka, 
+                jam_buka, jam_tutup, cuaca, musim_terbaik, deskripsi, 
+                foto_url, fasilitas
+            ) VALUES (
+                '$nama', '$lokasi', '$harga', '$jenis', '$status', 
+                '$jam_buka', '$jam_tutup', '$cuaca', '$musim', '$deskripsi', 
+                '$foto_url', '$fasilitas'
+            )";
+
+    if (mysqli_query($koneksi, $sql)) { 
+        $pesan_ok = "Destinasi berhasil ditambahkan!"; 
+    } else { 
+        $pesan_err = "Gagal: " . mysqli_error($koneksi); 
+    }
 }
-
 if (isset($_GET['hapus'])) {
     $id = (int)$_GET['hapus'];
     mysqli_query($koneksi, "DELETE FROM destinasi WHERE id_wisata='$id'");
