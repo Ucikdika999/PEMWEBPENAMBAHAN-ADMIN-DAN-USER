@@ -39,8 +39,9 @@ if (isset($_POST['tambah'])) {
     $foto_url  = mysqli_real_escape_string($koneksi, $_POST['foto_url']);
     $fasilitas = json_encode($_POST['fasilitas'] ?? []);
 
-    $sql = "INSERT INTO destinasi (nama_wisata, lokasi, harga, jenis_wisata, status_buka, jam_buka, jam_tutup, cuaca, musim_terbaik, deskripsi, foto_url, fasilitas)
-            VALUES ('$nama','$lokasi','$harga','$jenis','$status','$jam_buka','$jam_tutup','$cuaca','$musim','$deskripsi','$foto_url','$fasilitas')";
+// Bagian INSERT (Sekitar baris 43-44)
+$sql = "INSERT INTO destinasi (nama_wisata, alamat, harga, jenis_wisata, ...) 
+        VALUES ('$nama','$lokasi','$harga','$jenis',...)";
     if (mysqli_query($koneksi, $sql)) { $pesan_ok = "Destinasi berhasil ditambahkan!"; }
     else $pesan_err = "Gagal: " . mysqli_error($koneksi);
 }
