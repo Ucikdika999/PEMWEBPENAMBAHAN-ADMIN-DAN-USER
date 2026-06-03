@@ -53,18 +53,23 @@ if (isset($_POST['tambah'])) {
                 '$foto_url', '$fasilitas'
             )";
 
-    if (mysqli_query($koneksi, $sql)) { 
-        $pesan_ok = "Destinasi berhasil ditambahkan!"; 
-    } else { 
-        $pesan_err = "Gagal: " . mysqli_error($koneksi); 
-    }
+// Baris 56: Awal deklarasi query SQL
+$sql = "INSERT INTO destinasi (
+            nama_wisata, lokasi, harga, jenis_wisata, status_buka, 
+            jam_buka, jam_tutup, cuaca, musim_terbaik, deskripsi, 
+            foto_url, fasilitas
+        ) VALUES (
+            '$nama', '$lokasi', '$harga', '$jenis', '$status', 
+            '$jam_buka', '$jam_tutup', '$cuaca', '$musim', '$deskripsi', 
+            '$foto_url', '$fasilitas'
+        )"; 
+// Baris 67: Akhir dari tanda penutup tag string query
+// Baris 69
+if (mysqli_query($koneksi, $sql)) { 
+    $pesan_ok = "Destinasi berhasil ditambahkan!"; 
+} else { 
+    $pesan_err = "Gagal: " . mysqli_error($koneksi); 
 }
-if (isset($_GET['hapus'])) {
-    $id = (int)$_GET['hapus'];
-    mysqli_query($koneksi, "DELETE FROM destinasi WHERE id_wisata='$id'");
-    header("Location: kelola_wisata.php"); exit();
-}
-
 if (isset($_POST['edit'])) {
     $id        = (int)$_POST['id_wisata'];
     $lokasi    = mysqli_real_escape_string($koneksi, $_POST['lokasi'] ?? '');
