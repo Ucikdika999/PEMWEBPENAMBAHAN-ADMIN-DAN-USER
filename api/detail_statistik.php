@@ -6,8 +6,10 @@ session_start();
 // Ini akan memastikan jika Session hilang, Cookie akan memulihkannya otomatis
 include "auth_check.php"; 
 include "koneksi.php";
-include "catat_kunjungan.php";
-catatKunjungan($koneksi);
+$_hal = basename($_SERVER['PHP_SELF']);
+$_usr = isset($_SESSION['user']) ? mysqli_real_escape_string($koneksi, $_SESSION['user']) : 'tamu';
+$_ip  = mysqli_real_escape_string($koneksi, $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0');
+mysqli_query($koneksi, "INSERT INTO log_kunjungan (halaman, username, ip_address) VALUES ('$_hal', '$_usr', '$_ip')");
 
 // 2. Proteksi Halaman (Gunakan session yang sudah dipastikan ada oleh auth_check)
 if(!isset($_SESSION['login'])) { 
