@@ -2,8 +2,11 @@
 ob_start();
 include "auth_check.php";
 include "koneksi.php";
-include __DIR__ . "/catat_kunjungan.php";
-catatKunjungan($koneksi);
+// Catat kunjungan
+$_hal = basename($_SERVER['PHP_SELF']);
+$_usr = isset($_SESSION['user']) ? mysqli_real_escape_string($koneksi, $_SESSION['user']) : 'tamu';
+$_ip  = mysqli_real_escape_string($koneksi, $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0');
+mysqli_query($koneksi, "INSERT INTO log_kunjungan (halaman, username, ip_address) VALUES ('$_hal', '$_usr', '$_ip')");
 
 if ($_SESSION['role'] !== 'user') {
     header("Location: /api/admin_dashboard.php");
