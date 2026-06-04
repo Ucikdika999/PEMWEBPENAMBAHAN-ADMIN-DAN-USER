@@ -2,28 +2,144 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WISATA | Monitoring Tiket Wisata</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
-        .hero { 
-            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), 
-                        url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1350&q=80');
-            height: 100vh; background-size: cover; background-position: center;
-            color: white; display: flex; align-items: center; justify-content: center; text-align: center;
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --green-dark: #1a2e1a;
+            --green-mid:  #2d4a2d;
+            --green-main: #3a6b3a;
+            --green-light:#4e9a4e;
+            --accent:     #f0a500;
+            --white:      #ffffff;
+            --glass:      rgba(255,255,255,0.12);
+            --glass-border: rgba(255,255,255,0.2);
         }
+        html, body { height: 100%; overflow-x: hidden; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #0d1a0d; color: var(--white); }
+        .bg-wrap { position: fixed; inset: 0; z-index: 0; }
+        .bg-img { width: 100%; height: 100%; object-fit: cover; background: url('https://images.unsplash.com/photo-1501854140801-50d01698950b?auto=format&fit=crop&w=1920&q=80') center/cover no-repeat; }
+        .bg-overlay { position: absolute; inset: 0; background: linear-gradient(135deg, rgba(10,25,10,0.82) 0%, rgba(20,45,20,0.70) 50%, rgba(10,20,10,0.88) 100%); }
+        .bg-particles { position: absolute; inset: 0; overflow: hidden; }
+        .particle { position: absolute; border-radius: 50%; background: rgba(255,255,255,0.06); animation: float linear infinite; }
+        @keyframes float { 0% { transform: translateY(100vh) scale(0); opacity: 0; } 10% { opacity: 1; } 90% { opacity: 0.5; } 100% { transform: translateY(-10vh) scale(1.2); opacity: 0; } }
+        .navbar { position: fixed; top: 0; left: 0; right: 0; z-index: 100; padding: 18px 48px; display: flex; align-items: center; justify-content: space-between; background: rgba(10,25,10,0.4); backdrop-filter: blur(16px); border-bottom: 1px solid rgba(255,255,255,0.07); animation: slideDown 0.8s ease both; }
+        @keyframes slideDown { from { transform: translateY(-100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        .nav-brand { display: flex; align-items: center; gap: 10px; font-weight: 900; font-size: 1.3rem; letter-spacing: 1px; }
+        .nav-brand .logo-icon { width: 38px; height: 38px; background: linear-gradient(135deg, var(--green-light), var(--accent)); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; }
+        .nav-links { display: flex; align-items: center; gap: 12px; }
+        .nav-time { background: rgba(255,255,255,0.08); border: 1px solid var(--glass-border); border-radius: 10px; padding: 8px 16px; font-size: 0.82rem; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+        .nav-time i { color: var(--accent); }
+        .hero { position: relative; z-index: 10; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 100px 24px 40px; text-align: center; }
+        .hero-badge { display: inline-flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); border-radius: 30px; padding: 8px 20px; font-size: 0.8rem; font-weight: 600; margin-bottom: 28px; animation: fadeUp 0.8s 0.2s ease both; }
+        .hero-badge span { color: var(--accent); }
+        .hero-logo { width: 90px; height: 90px; background: linear-gradient(135deg, var(--green-mid), var(--green-light)); border-radius: 24px; display: flex; align-items: center; justify-content: center; font-size: 2.4rem; margin: 0 auto 24px; box-shadow: 0 20px 60px rgba(78,154,78,0.35); animation: fadeUp 0.8s 0.3s ease both; }
+        .hero-title { font-size: clamp(2.8rem, 7vw, 5.5rem); font-weight: 900; letter-spacing: -1px; line-height: 1.05; margin-bottom: 16px; animation: fadeUp 0.8s 0.4s ease both; }
+        .hero-title .highlight { background: linear-gradient(135deg, #7dd87d, var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .hero-sub { font-size: clamp(1rem, 2.5vw, 1.25rem); opacity: 0.65; max-width: 520px; margin: 0 auto 48px; line-height: 1.6; font-weight: 500; animation: fadeUp 0.8s 0.5s ease both; }
+        .hero-btns { display: flex; gap: 14px; flex-wrap: wrap; justify-content: center; animation: fadeUp 0.8s 0.6s ease both; }
+        .btn-main { display: inline-flex; align-items: center; gap: 10px; background: linear-gradient(135deg, var(--green-mid), var(--green-light)); color: white; text-decoration: none; padding: 16px 36px; border-radius: 14px; font-weight: 700; font-size: 1rem; box-shadow: 0 8px 32px rgba(78,154,78,0.4); transition: all 0.3s; border: 1px solid rgba(255,255,255,0.15); }
+        .btn-main:hover { transform: translateY(-3px); box-shadow: 0 14px 40px rgba(78,154,78,0.55); color: white; }
+        .btn-outline { display: inline-flex; align-items: center; gap: 10px; background: rgba(255,255,255,0.08); color: white; text-decoration: none; padding: 16px 36px; border-radius: 14px; font-weight: 700; font-size: 1rem; border: 1px solid rgba(255,255,255,0.2); backdrop-filter: blur(8px); transition: all 0.3s; }
+        .btn-outline:hover { background: rgba(255,255,255,0.15); transform: translateY(-3px); color: white; }
+        .stats-strip { display: flex; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; backdrop-filter: blur(20px); margin-top: 64px; overflow: hidden; animation: fadeUp 0.8s 0.8s ease both; max-width: 700px; width: 100%; }
+        .stat-item { flex: 1; padding: 24px 20px; text-align: center; border-right: 1px solid rgba(255,255,255,0.08); transition: background 0.3s; }
+        .stat-item:last-child { border-right: none; }
+        .stat-item:hover { background: rgba(255,255,255,0.05); }
+        .stat-num { font-size: 1.8rem; font-weight: 900; background: linear-gradient(135deg, #7dd87d, var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .stat-lbl { font-size: 0.75rem; opacity: 0.55; margin-top: 4px; font-weight: 600; }
+        .features { position: relative; z-index: 10; padding: 80px 48px; max-width: 1200px; margin: 0 auto; }
+        .features-title { text-align: center; font-size: 2rem; font-weight: 800; margin-bottom: 48px; }
+        .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; }
+        .feat-card { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 28px; backdrop-filter: blur(16px); transition: all 0.3s; }
+        .feat-card:hover { background: rgba(255,255,255,0.1); transform: translateY(-6px); border-color: rgba(255,255,255,0.2); box-shadow: 0 20px 50px rgba(0,0,0,0.3); }
+        .feat-icon { width: 52px; height: 52px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; margin-bottom: 18px; }
+        .feat-icon-green { background: rgba(78,154,78,0.2); color: #7dd87d; }
+        .feat-icon-gold  { background: rgba(240,165,0,0.2);  color: var(--accent); }
+        .feat-icon-blue  { background: rgba(56,189,248,0.2); color: #38bdf8; }
+        .feat-title { font-weight: 800; font-size: 1rem; margin-bottom: 8px; }
+        .feat-desc  { font-size: 0.83rem; opacity: 0.6; line-height: 1.6; }
+        .footer { position: relative; z-index: 10; text-align: center; padding: 30px; font-size: 0.8rem; opacity: 0.4; border-top: 1px solid rgba(255,255,255,0.07); }
+        @keyframes fadeUp { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        @media (max-width: 600px) { .navbar { padding: 14px 20px; } .features { padding: 60px 20px; } .hero-btns { flex-direction: column; align-items: center; } .btn-main, .btn-outline { width: 100%; justify-content: center; } }
     </style>
 </head>
 <body>
-    <div class="hero">
-        <div class="container">
-            <h1 class="display-2 fw-bold mb-3"><i class="fas fa-mountain-sun"></i> WISATA</h1>
-            <p class="lead mb-5 fs-3">Sistem Monitoring Tiket Wisata Real-Time & Modern</p>
-            <div class="d-grid gap-3 d-sm-flex justify-content-sm-center">
-                <a href="api/login.php" class="btn btn-primary btn-lg px-4">Login Petugas</a>
-                <a href="api/register.php" class="btn btn-outline-light btn-lg px-4">Daftar Pengunjung</a>
-            </div>
+
+<div class="bg-wrap">
+    <div class="bg-img"></div>
+    <div class="bg-overlay"></div>
+    <div class="bg-particles" id="particles"></div>
+</div>
+
+<nav class="navbar">
+    <div class="nav-brand">
+        <div class="logo-icon">🏔️</div>
+        WISATA
+    </div>
+    <div class="nav-links">
+        <div class="nav-time">
+            <i class="fas fa-clock"></i>
+            <span id="jamNav">--:--:-- WIB</span>
         </div>
     </div>
+</nav>
+
+<section class="hero">
+    <div class="hero-badge">
+        <i class="fas fa-circle" style="color:#4e9a4e;font-size:.5rem;"></i>
+        Sistem Aktif & Real-Time <span>✦ 2024</span>
+    </div>
+    <div class="hero-logo">🏔️</div>
+    <h1 class="hero-title">Sistem <span class="highlight">Monitoring</span><br>Tiket Wisata</h1>
+    <p class="hero-sub">Pantau, kelola, dan analisis data kunjungan wisata secara real-time dengan teknologi modern dan data BPS terkini.</p>
+    <div class="hero-btns">
+        <a href="api/login.php" class="btn-main"><i class="fas fa-sign-in-alt"></i> Login Petugas</a>
+        <a href="api/register.php" class="btn-outline"><i class="fas fa-user-plus"></i> Daftar Pengunjung</a>
+    </div>
+    <div class="stats-strip">
+        <div class="stat-item"><div class="stat-num">Real-Time</div><div class="stat-lbl">Data Kunjungan</div></div>
+        <div class="stat-item"><div class="stat-num">BPS API</div><div class="stat-lbl">Statistik Nasional</div></div>
+        <div class="stat-item"><div class="stat-num">Aman</div><div class="stat-lbl">Data Terenkripsi</div></div>
+    </div>
+</section>
+
+<section class="features">
+    <div class="features-title">✨ Fitur Unggulan Sistem</div>
+    <div class="features-grid">
+        <div class="feat-card"><div class="feat-icon feat-icon-green"><i class="fas fa-chart-line"></i></div><div class="feat-title">Tracking Pengunjung</div><div class="feat-desc">Pantau jumlah kunjungan harian, jam ramai, dan halaman paling populer secara real-time.</div></div>
+        <div class="feat-card"><div class="feat-icon feat-icon-gold"><i class="fas fa-ticket-alt"></i></div><div class="feat-title">Manajemen Tiket</div><div class="feat-desc">Kelola pembelian tiket wisata, cek riwayat, dan batalkan pesanan dengan mudah.</div></div>
+        <div class="feat-card"><div class="feat-icon feat-icon-blue"><i class="fas fa-database"></i></div><div class="feat-title">Data BPS Real-Time</div><div class="feat-desc">Integrasi langsung dengan API BPS untuk statistik kunjungan wisatawan mancanegara terkini.</div></div>
+        <div class="feat-card"><div class="feat-icon feat-icon-green"><i class="fas fa-shield-halved"></i></div><div class="feat-title">Keamanan Data</div><div class="feat-desc">Password terenkripsi, sistem role admin & user, dan proteksi halaman berlapis.</div></div>
+        <div class="feat-card"><div class="feat-icon feat-icon-gold"><i class="fas fa-file-invoice"></i></div><div class="feat-title">Laporan Pesanan</div><div class="feat-desc">Filter laporan berdasarkan tanggal dan status, ekspor ke CSV, atau cetak langsung.</div></div>
+        <div class="feat-card"><div class="feat-icon feat-icon-blue"><i class="fas fa-mountain-sun"></i></div><div class="feat-title">Kelola Destinasi</div><div class="feat-desc">Tambah, edit, dan hapus destinasi wisata lengkap dengan foto, fasilitas, dan jam operasional.</div></div>
+    </div>
+</section>
+
+<footer class="footer">© 2024 WISATA. All rights reserved. 🌿</footer>
+
+<script>
+function updateJam() {
+    const now = new Date();
+    const h = String(now.getHours()).padStart(2,'0');
+    const m = String(now.getMinutes()).padStart(2,'0');
+    const s = String(now.getSeconds()).padStart(2,'0');
+    document.getElementById('jamNav').textContent = `${h}:${m}:${s} WIB`;
+}
+updateJam();
+setInterval(updateJam, 1000);
+
+const container = document.getElementById('particles');
+for (let i = 0; i < 18; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    const size = Math.random() * 60 + 10;
+    p.style.cssText = `width:${size}px;height:${size}px;left:${Math.random()*100}%;animation-duration:${Math.random()*20+15}s;animation-delay:${Math.random()*15}s;`;
+    container.appendChild(p);
+}
+</script>
 </body>
 </html>
